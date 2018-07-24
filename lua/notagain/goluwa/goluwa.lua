@@ -571,6 +571,7 @@ function goluwa.CreateEnv()
 	for i, args in ipairs(commands_add_buffer) do env.commands.Add(unpack(args)) end
 
 	env.window = env.runfile("framework/lua/libraries/graphics/window.lua")
+	env.tasks = env.runfile("framework/lua/libraries/tasks.lua")
 
 	env.system = env.runfile("core/lua/libraries/system.lua")
 	env.profiler = env.runfile("core/lua/libraries/profiler.lua")
@@ -662,6 +663,8 @@ function goluwa.CreateEnv()
 	end
 
 	env.resource = env.runfile("framework/lua/libraries/sockets/resource.lua")
+
+	env.resource.AddProvider("https://gitlab.com/CapsAdmin/goluwa-assets/raw/master/base/", true)
 
 	env.input = env.runfile("framework/lua/libraries/input.lua")
 	env.language = env.runfile("engine/lua/libraries/language.lua")

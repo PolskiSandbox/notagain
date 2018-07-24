@@ -9,12 +9,16 @@ webaudio.sample_rate = nil
 webaudio.speed_of_sound = 340.29 -- metres per
 webaudio.buffer_size = CreateClientConVar("webaudio_buffer_size", "2048", true)
 
+local function logn(str)
+	MsgC(Color(0, 255, 0), "[webaudio] ")
+	MsgC(Color(255, 255, 255), str)
+	Msg("\n")
+end
+
 local function dprint(str)
-	if webaudio.debug then
-    MsgC(Color(0, 255, 0), "[webaudio] ")
-		MsgC(Color(255, 255, 255), str)
-		Msg("\n")
-	end
+    if webaudio.debug  then
+        logn(str)
+    end
 end
 
 cvars.AddChangeCallback("webaudio_buffer_size", function(_,_,val)
@@ -140,7 +144,11 @@ function webaudio.Initialize()
 
 		if typ == "initialized" then
 			webaudio.browser_state = "initialized"
-			webaudio.sample_rate = args[1]
+			webaudio.sample_rate = args[1] or -1
+
+			if webaudio.sample_rate and webaudio.sample_rate > 48000 then
+				logn("Your sample rate set to ", webaudio.sample_rate, " Hz. Set it to 48000 or below if you experience any issues.")
+			end
 		elseif typ == "stream" then
 			local stream = webaudio.GetStream(tonumber(args[2]) or 0)
 			if stream:IsValid() then
