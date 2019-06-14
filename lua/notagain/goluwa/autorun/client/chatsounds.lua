@@ -10,7 +10,7 @@ local autocomplete_font = env.fonts.CreateFont({
 })
 
 local chatsounds_enabled = CreateClientConVar("chatsounds_enabled", "1", true, false, "Disable chatsounds")
-local chatsounds_help_enabled = CreateClientConVar("chatsounds_help_enabled", "0", true, false, "Disable chatsounds help")
+
 do
 	local found_autocomplete
 	local random_mode = false
@@ -49,7 +49,6 @@ do
 		end)
 
 		hook.Add("PostRenderVGUI", "chatsounds_autocomplete", function()
-		if not chatsounds_help_enabled:GetBool() then return end
 			if random_mode then return end
 			if found_autocomplete and #found_autocomplete > 0 then
 				local x, y = chat.GetChatBoxPos()
@@ -78,21 +77,7 @@ local function player_say(ply, str)
 	if not init then
 		env.chatsounds.Initialize()
 
-		env.chatsounds.BuildFromGithub("PAC3-Server/chatsounds-valve-games", "tf2")
-		env.chatsounds.BuildFromGithub("PAC3-Server/chatsounds-valve-games", "hl2")
-		env.chatsounds.BuildFromGithub("PAC3-Server/chatsounds-valve-games", "ep1")
-		env.chatsounds.BuildFromGithub("PAC3-Server/chatsounds-valve-games", "ep2")
-		env.chatsounds.BuildFromGithub("PAC3-Server/chatsounds-valve-games", "portal")
-		env.chatsounds.BuildFromGithub("PAC3-Server/chatsounds-valve-games", "l4d")
-		env.chatsounds.BuildFromGithub("PAC3-Server/chatsounds-valve-games", "l4d2")
-		env.chatsounds.BuildFromGithub("PAC3-Server/chatsounds-valve-games", "css")
-		env.chatsounds.BuildFromGithub("PAC3-Server/chatsounds-valve-games", "csgo")
-
-		env.chatsounds.BuildFromGithub("PAC3-Server/chatsounds")
-		env.chatsounds.BuildFromGithub("PolskiSandbox/chatsounds")
-		env.chatsounds.BuildFromGithub("Metastruct/garrysmod-chatsounds", "sound/chatsounds/autoadd")
-
-		hook.Run("ChatSoundsInitialized")
+		hook.Run("ChatsoundsInitialized")
 
 		init = true
 	end
