@@ -76,7 +76,7 @@ local function player_say(ply, str)
 	str = str:lower()
 	if not init then
 		env.chatsounds.Initialize()
-		env.chatsounds.BuildFromGithub("PolskiSandbox/chatsounds", "sound/chatsounds")
+		env.chatsounds.BuildFromGithub("PolskiSandbox/chatsounds", "sounds/chatsounds")
 		hook.Run("ChatsoundsInitialized")
 
 		init = true
