@@ -15,6 +15,7 @@ local default_lists = {
 	"PAC3-Server/chatsounds-valve-games/tf2",
 	"Metastruct/garrysmod-chatsounds/sound/chatsounds/autoadd",
 	"PAC3-Server/chatsounds",
+	"PolskiSandbox/chatsounds",
 }
 
 local function load_subscriptions(subscriptions)
