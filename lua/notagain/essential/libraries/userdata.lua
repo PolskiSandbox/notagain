@@ -27,6 +27,60 @@ local function load(key)
     end
 end
 
+if SERVER then
+    net.Receive("userdata", function(len, ply)
+        local key = net.ReadString()
+        if not userdata.known[key] then return end
+
+        local val = net.ReadType()
+
+        if userdata.known[key].callback then
+            local ok, err = pcall(userdata.known[key].callback, ply, val)
+            if not ok then
+                print("userdata error: ", err)
+            end
+        end
+
+        userdata.players[ply:UniqueID()] = userdata.players[ply:UniqueID()] or {}
+        userdata.players[ply:UniqueID()][key] = val
+
+        net.Start("userdata_broadcast")
+            net.WriteEntity(ply)
+            net.WriteString(key)
+            net.WriteType(val)
+        net.SendOmit(ply)
+    end)
+
+    hook.Add("PlayerFullLoad", "userdata", function(ply)
+        userdata.players[ply:UniqueID()] = userdata.players[ply:UniqueID()] or {}
+
+        for _, other in pairs(player.GetAll()) do
+            if ply == other then continue end
+
+            userdata.players[other:UniqueID()] = userdata.players[other:UniqueID()] or {}
+
+            local data = userdata.players[other:UniqueID()]
+            for key, val in pairs(data) do
+                net.Start("userdata_broadcast")
+                    net.WriteEntity(other)
+                    net.WriteString(key)
+                    net.WriteType(val)
+                net.Send(ply)
+            end
+        end
+    end)
+
+    hook.Add("EntityRemoved", "userdata", function(ply)
+        if not ply:IsValid() or not ply:IsPlayer() then return end
+
+        userdata.players[ply:UniqueID()] = nil
+    end)
+
+    for _, ply in ipairs(player.GetAll()) do
+        userdata.players[ply:UniqueID()] = {}
+    end
+end
+
 function userdata.SetupConVar(key, default, callback)
     userdata.known[key] = {
         default = default,
@@ -149,63 +203,6 @@ if CLIENT then
         userdata.players[uid] = userdata.players[uid] or {}
         userdata.players[uid][key] = val
     end)
-end
-
-if SERVER then
-    util.AddNetworkString("userdata")
-    util.AddNetworkString("userdata_broadcast")
-
-    net.Receive("userdata", function(len, ply)
-        local key = net.ReadString()
-        if not userdata.known[key] then return end
-
-        local val = net.ReadType()
-
-        if userdata.known[key].callback then
-            local ok, err = pcall(userdata.known[key].callback, ply, val)
-            if not ok then
-                print("userdata error: ", err)
-            end
-        end
-
-        userdata.players[ply:UniqueID()] = userdata.players[ply:UniqueID()] or {}
-        userdata.players[ply:UniqueID()][key] = val
-
-        net.Start("userdata_broadcast")
-            net.WriteEntity(ply)
-            net.WriteString(key)
-            net.WriteType(val)
-        net.SendOmit(ply)
-    end)
-
-    hook.Add("PlayerFullLoad", "userdata", function(ply)
-        userdata.players[ply:UniqueID()] = userdata.players[ply:UniqueID()] or {}
-
-        for _, other in pairs(player.GetAll()) do
-            if ply == other then continue end
-
-            userdata.players[other:UniqueID()] = userdata.players[other:UniqueID()] or {}
-
-            local data = userdata.players[other:UniqueID()]
-            for key, val in pairs(data) do
-                net.Start("userdata_broadcast")
-                    net.WriteEntity(other)
-                    net.WriteString(key)
-                    net.WriteType(val)
-                net.Send(ply)
-            end
-        end
-    end)
-
-    hook.Add("EntityRemoved", "userdata", function(ply)
-        if not ply:IsValid() or not ply:IsPlayer() then return end
-
-        userdata.players[ply:UniqueID()] = nil
-    end)
-
-    for _, ply in ipairs(player.GetAll()) do
-        userdata.players[ply:UniqueID()] = {}
-    end
 end
 
 return userdata
