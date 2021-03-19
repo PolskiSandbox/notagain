@@ -1,5 +1,10 @@
 AddCSLuaFile()
 
+if SERVER then
+    util.AddNetworkString("userdata")
+    util.AddNetworkString("userdata_broadcast")
+end
+
 local root_dir = "notagain"
 notagain = notagain or {}
 notagain.loaded_libraries = notagain.loaded_libraries or {}
