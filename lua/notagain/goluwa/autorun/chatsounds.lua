@@ -15,7 +15,7 @@ local default_lists = {
 	"PAC3-Server/chatsounds-valve-games/tf2",
 	"Metastruct/garrysmod-chatsounds/sound/chatsounds/autoadd",
 	"PAC3-Server/chatsounds",
-	"PolskiSandbox/chatsounds",
+	"PolskiSandbox/chatsound",
 }
 
 local function load_subscriptions(subscriptions)
@@ -168,12 +168,8 @@ if CLIENT then
             if not chatsounds_enabled:GetBool() then return end
 
             hook.Add("OnChatTab", "chatsounds_autocomplete", function(str)
-<<<<<<< HEAD
-		if str:Trim():find("[\r\n]") then str = "" end
-=======
                 if str:Trim() == "" then return end
 
->>>>>>> 205d4bf6a9317d92a33e3c4e2bff9dbb5f6ee882
                 if str == "random" or random_mode then
                     random_mode = true
                     query("", 0)
@@ -194,12 +190,6 @@ if CLIENT then
                 end
 
                 random_mode = false
-<<<<<<< HEAD
-		if str:find("^[!/%.]") 
-		or str:find("[\r\n]")
-		or str:find("https?://") then found_autocomplete={} return end
-=======
->>>>>>> 205d4bf6a9317d92a33e3c4e2bff9dbb5f6ee882
                 query(str, 0)
             end)
 
@@ -229,8 +219,6 @@ if CLIENT then
     local init = false
 
     local function player_say(ply, str)
-<<<<<<< HEAD
-=======
         if not chatsounds_enabled:GetBool() then
             return
         end
@@ -238,7 +226,6 @@ if CLIENT then
         -- prevent error when server says something
         if not ply:IsValid() then return end
 
->>>>>>> 205d4bf6a9317d92a33e3c4e2bff9dbb5f6ee882
         if not init then
             env.chatsounds.Initialize()
             hook.Run("ChatsoundsInitialized")
@@ -248,27 +235,14 @@ if CLIENT then
         local info = {
             ply = ply,
             line = str,
-<<<<<<< HEAD
-=======
             seed = math.Round(CurTime())
->>>>>>> 205d4bf6a9317d92a33e3c4e2bff9dbb5f6ee882
         }
 
         if hook.Run("PreChatSound", info) == false then return end
 
-<<<<<<< HEAD
-        if str:Trim():find("^<.*>$") then return end
-        if str:find("^[!/%.]") then return end
-        if str:find("https?://") then return end
-
-        if not IsValid(ply) then return end
-        if ply:IsDormant() then return end
-        if LocalPlayer():EyePos():Distance(ply:EyePos()) > 2500 then return end
-=======
         ply = info.ply
         str = info.line
         local seed = info.seed
->>>>>>> 205d4bf6a9317d92a33e3c4e2bff9dbb5f6ee882
 
         if str == "sh" or (str:find("sh%s") and not str:find("%Ssh")) or (str:find("%ssh") and not str:find("sh%S")) then
             env.audio.Panic()
@@ -280,32 +254,14 @@ if CLIENT then
         end
 
         env.audio.player_object = ply
-<<<<<<< HEAD
-        env.chatsounds.Say(str, math.Round(CurTime()), ids)
-=======
         env.chatsounds.Say(str, seed, ids)
->>>>>>> 205d4bf6a9317d92a33e3c4e2bff9dbb5f6ee882
 
         hook.Run("PostChatSound", info)
     end
 
     hook.Add("OnPlayerChat", "chatsounds", player_say)
 
-<<<<<<< HEAD
-    concommand.Add("saysound",function(ply, _,_, str)
-        if util.NetworkStringToID("newchatsounds") > 0 then -- If the server has added the NetworkString
-            net.Start("newchatsounds")
-                net.WriteString(str:sub(1, 64000 - 32 - 32000)) -- Cut to 32KB
-            net.SendToServer()
-        else
-            player_say(ply, str)
-        end
-    end)
-
-    net.Receive("newchatsounds", function()
-=======
     net.Receive("chatsounds_saysound", function()
->>>>>>> 205d4bf6a9317d92a33e3c4e2bff9dbb5f6ee882
         local ply = net.ReadEntity()
         if not ply:IsValid() then return end
 
@@ -317,8 +273,6 @@ if CLIENT then
         hook.Remove("OnPlayerChat", "chatsounds")
     end
 end
-<<<<<<< HEAD
-=======
 
 if SERVER then
     util.AddNetworkString("chatsounds_saysound")
@@ -330,4 +284,3 @@ if SERVER then
         net.Broadcast()
     end)
 end
->>>>>>> 205d4bf6a9317d92a33e3c4e2bff9dbb5f6ee882
