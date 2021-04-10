@@ -15,9 +15,9 @@ local function logn(str)
 end
 
 local function dprint(str)
-	if webaudio.debug then
-		logn(str)
-	end
+    if webaudio.debug  then
+        logn(str)
+    end
 end
 
 cvars.AddChangeCallback("webaudio_buffer_size", function(_,_,val)
@@ -117,49 +117,9 @@ function webaudio.Initialize()
 	end
 
 	webaudio.browser_panel = vgui.Create("DHTML")
-	webaudio.browser_panel:SetVisible(true)
+	webaudio.browser_panel:SetVisible(false)
 	webaudio.browser_panel:SetPos(ScrW(), ScrH())
 	webaudio.browser_panel:SetSize(1, 1)
-	webaudio.browser_panel:ParentToHUD()
-	webaudio.browser_panel:SetAlpha(1)
-	webaudio.browser_panel:SetPaintedManually(true)
-	webaudio.browser_panel:SetVerticalScrollbarEnabled(false)
-
-	local Browser = webaudio.browser_panel
-
-	function Browser:FixAutoplay()
-		print("fixautoplay wa",self)
-		self.autoplayfix = 0
-	end
-
-	function Browser:FixAutoplayThink()
-		if not self.autoplayfix then return end
-		self.autoplayfix = self.autoplayfix + 1
-		if self.autoplayfix == 1 then
-			self:MouseCapture(true)
-
-			self.apMouseEnabled = self:IsMouseInputEnabled()
-
-			self:SetMouseInputEnabled(true)
-			gui.EnableScreenClicker(true)
-			gui.InternalCursorMoved(0, 0)
-			gui.InternalMousePressed(MOUSE_LEFT)
-			gui.InternalMouseReleased(MOUSE_LEFT)
-		elseif self.autoplayfix == 2 then
-			gui.EnableScreenClicker(false)
-			print("apfix 2",self)
-			self:SetMouseInputEnabled(self.apMouseEnabled)
-			self:MouseCapture(false)
-		elseif self.autoplayfix == 3 then
-			self.autoplayfix = false
-			self:AutoPlayFixed()
-		end
-	end
-
-	function Browser:Think()
-		self:FixAutoplayThink()
-	end
-
 
 	local last_message = nil
 	webaudio.browser_panel.ConsoleMessage = function(self, message)
@@ -179,14 +139,7 @@ function webaudio.Initialize()
 		local args = {...}
 
 		local strs = {}
-<<<<<<< HEAD
-		for i, arg in ipairs(args) do
-			strs[i] = tostring(arg)
-		end
-
-=======
 		for i, arg in ipairs(args) do strs[i] = tostring(arg) end
->>>>>>> 205d4bf6a9317d92a33e3c4e2bff9dbb5f6ee882
 		dprint(typ .. " " .. table.concat(strs, ", "))
 
 		if typ == "initialized" then
@@ -595,12 +548,7 @@ open();
 	webaudio.browser_panel.OnFinishLoadingDocument = function(self)
 		self.OnFinishLoadingDocument = nil
 
-		self:FixAutoplay()
 		dprint("OnFinishLoadingDocument")
-	end
-
-	function webaudio.browser_panel:AutoPlayFixed()
-		dprint("AutoPlayFixed -> running init...")
 		webaudio.browser_panel:RunJavascript(js)
 	end
 
@@ -704,7 +652,6 @@ do
 	end
 
 	function META:Remove()
-		webaudio.streams[self:GetId()] = nil
 		self:Stop()
 		run_javascript(string.format("DestroyStream(%i)", self:GetId()))
 		self.invalid = true
