@@ -77,7 +77,7 @@ do
 		end)
 	end
 
-	function goluwa.Update(cb, forced_tag)
+	function goluwa.Update(cb)
 		file.CreateDir("goluwa")
 
 		if not GOLUWA_FORCE_DOWNLOAD and file.IsDir("addons/goluwa", "MOD") then
@@ -631,7 +631,7 @@ function goluwa.CreateEnv()
 		env.http = env.runfile("core/lua/libraries/http.lua")
 
 		function sockets.Request(tbl)
-			--tbl.callback = tbl.callback or function() end
+			--tbl.callback = tbl.callback or env.table.print
 			tbl.method = tbl.method or "GET"
 
 			if tbl.timeout and tbl.timedout_callback then
@@ -643,10 +643,6 @@ function goluwa.CreateEnv()
 			end
 
 			tbl.url = tbl.url:gsub(" ", "%%20")
-			local host, path = tbl.url:match("^(.-://.-/)(.*)$")
-			if host and path then
-				tbl.url = host .. path:gsub("%.", "%%2E")
-			end
 
 			--print("HTTP: " .. tbl.url)
 
@@ -717,8 +713,6 @@ function goluwa.CreateEnv()
 	env.input = env.runfile("framework/lua/libraries/input.lua")
 	env.language = env.runfile("engine/lua/libraries/language.lua")
 	env.L = env.language.LanguageString
-
-	env.runfile("engine/lua/libraries/extensions/serializer.lua")
 
 	do
 		local backend = CreateClientConVar("goluwa_audio_backend", "webaudio")
